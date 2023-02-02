@@ -1,4 +1,7 @@
 using Lemondo.Context;
+using Lemondo.DbClasses;
+using Lemondo.UnitofWork.Interface;
+using Lemondo.UnitofWork.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +12,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+//unitofwork
+builder.Services.AddScoped<IUnitofWork, UnitofWorkRepository>();
 
 //dbcontext 
 var connectionstring = builder.Configuration.GetConnectionString("LemondoConnection");
