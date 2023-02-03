@@ -27,7 +27,7 @@ namespace Lemondo.UnitofWork.Repository
         }
         public override async Task<bool> Upsert(BookAuthor entity)
         {
-            try
+            try 
             {
                 var existingEntity = await dbset.Where(x => x.BookId == entity.BookId)
                                                     .FirstOrDefaultAsync();
@@ -42,7 +42,7 @@ namespace Lemondo.UnitofWork.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} Upsert function error", typeof(BookratingRepository));
+                _logger.LogError(ex, "{Repo} Upsert function error", typeof(BookAuthorRepository));
                 return false;
             }
         }
@@ -62,7 +62,7 @@ namespace Lemondo.UnitofWork.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} Delete function error", typeof(BookratingRepository));
+                _logger.LogError(ex, "{Repo} Delete function error", typeof(BookAuthorRepository));
                 return false;
             }
         }

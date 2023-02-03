@@ -1,7 +1,8 @@
 ﻿using Lemondo.UnitofWork.Interface;
 using Lemondo.Context;
 using Lemondo.DbClasses;
-
+using System.Linq.Expressions;
+using System.Linq.Dynamic;
 
 namespace Lemondo.UnitofWork.Repository
 {
@@ -22,8 +23,10 @@ namespace Lemondo.UnitofWork.Repository
             _logger = loggerFactory.CreateLogger("logs");
 
             Book = new BookRepository(context, _logger);
-
-            Author = new BookratingRepository(context, _logger);
+            Author = new AuthorRepository(context, _logger);
+            BookAuthor = new BookAuthorRepository(context, _logger);
+            BookRating = new BookRatingRepository(context, _logger);
+            User = new UserRepository(context, _logger);
         }
 
         public UnitofWorkRepository()

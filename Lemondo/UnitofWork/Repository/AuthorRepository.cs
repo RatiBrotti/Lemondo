@@ -5,9 +5,9 @@ using System.Data.Entity;
 
 namespace Lemondo.UnitofWork.Repository
 {
-    public class BookratingRepository : GenericRepository<Author>, IAuthorRepository
+    public class AuthorRepository : GenericRepository<Author>, IAuthorRepository
     {
-        public BookratingRepository(LibraryContext context, ILogger logger) : base(context, logger)
+        public AuthorRepository(LibraryContext context, ILogger logger) : base(context, logger)
         {
 
         }
@@ -19,7 +19,7 @@ namespace Lemondo.UnitofWork.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} All function error", typeof(BookratingRepository));
+                _logger.LogError(ex, "{Repo} All function error", typeof(AuthorRepository));
                 return Enumerable.Empty<Author>().AsQueryable();
             }
         }
@@ -42,7 +42,7 @@ namespace Lemondo.UnitofWork.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} Upsert function error", typeof(BookratingRepository));
+                _logger.LogError(ex, "{Repo} Upsert function error", typeof(AuthorRepository));
                 return false;
             }
         }
@@ -62,7 +62,7 @@ namespace Lemondo.UnitofWork.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} Delete function error", typeof(BookratingRepository));
+                _logger.LogError(ex, "{Repo} Delete function error", typeof(AuthorRepository));
                 return false;
             }
         }

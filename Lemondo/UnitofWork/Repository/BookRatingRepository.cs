@@ -1,10 +1,11 @@
 ﻿using Lemondo.Context;
 using Lemondo.DbClasses;
 using Lemondo.UnitofWork.Interface;
+using System.Data.Entity;
 
 namespace Lemondo.UnitofWork.Repository
 {
-    public class BookRatingRepository : GenericRepository<Author>, IBookRatingRepository
+    public class BookRatingRepository : GenericRepository<BookRating>, IBookRatingRepository
     {
         public BookRatingRepository(LibraryContext context, ILogger logger) : base(context, logger)
         {
@@ -61,7 +62,7 @@ namespace Lemondo.UnitofWork.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} Delete function error", typeof(BookratingRepository));
+                _logger.LogError(ex, "{Repo} Delete function error", typeof(BookRatingRepository));
                 return false;
             }
         }

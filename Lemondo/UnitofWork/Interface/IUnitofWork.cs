@@ -2,7 +2,7 @@
 
 namespace Lemondo.UnitofWork.Interface
 {
-    public interface IUnitofWork : IGenericRepository<User>
+    public interface IUnitofWork
     {
         IUserRepository User { get; }
         IBookRatingRepository BookRating { get; }
