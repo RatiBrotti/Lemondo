@@ -1,10 +1,12 @@
 ﻿using Lemondo.DbClasses;
 using Lemondo.UnitofWork.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lemondo.Controllers
 {
+    [Authorize(policy:"ApiScope")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorController : ControllerBase
