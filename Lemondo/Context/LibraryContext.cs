@@ -1,12 +1,12 @@
 ﻿using Lemondo.DbClasses;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Lemondo.Context
 {
-    public class LibraryContext : DbContext
+    public partial class LibraryContext : DbContext
     {
-        public LibraryContext(DbContextOptions<LibraryContext> options)
-        : base(options)
+        public LibraryContext(DbContextOptions<LibraryContext> options) : base(options)
         {
         }
 
@@ -17,29 +17,19 @@ namespace Lemondo.Context
         public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BookAuthor>()
-                .HasKey(ba => new { ba.BookId, ba.AuthorId });
+            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
-            modelBuilder.Entity<BookAuthor>()
-                .HasOne(ba => ba.Book)
-                .WithMany(b => b.BookAuthors)
-                .HasForeignKey(ba => ba.BookId);
+            modelBuilder.HasSequence("ContactIDSequence")
+                .StartsAt(0)
+                .IncrementsBy(10);
 
-            modelBuilder.Entity<BookAuthor>()
-                .HasOne(ba => ba.Author)
-                .WithMany(a => a.BookAuthors)
-                .HasForeignKey(ba => ba.AuthorId);
+            modelBuilder.HasSequence("D").StartsAt(0);
 
-            modelBuilder.Entity<BookRating>()
-                .HasOne(br => br.Book)
-                .WithMany(b => b.BookRatings)
-                .HasForeignKey(br => br.BookId);
+            modelBuilder.HasSequence("val");
 
-            modelBuilder.Entity<BookRating>()
-               .HasOne(br => br.User)
-               .WithMany(u => u.BookRatings)
-               .HasForeignKey(br => br.UserId);
+            OnModelCreatingPartial(modelBuilder);
         }
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
 

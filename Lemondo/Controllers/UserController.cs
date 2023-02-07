@@ -1,4 +1,7 @@
-﻿using Lemondo.DbClasses;
+﻿using AutoMapper;
+using Lemondo.ClientClass;
+using Lemondo.DbClasses;
+using Lemondo.Requestes;
 using Lemondo.UnitofWork.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,42 +14,48 @@ namespace Lemondo.Controllers
     {
 
         private readonly IUnitofWork _unitofWork;
+        private readonly IMapper _mapper;
 
-        public UserController(IUnitofWork unitofWork)
+        public UserController(IUnitofWork unitofWork, IMapper mapper)
         {
+            _mapper = mapper;
             _unitofWork = unitofWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var books = await _unitofWork.User.GetAll();
-            return Ok(User);
+            var users = await _unitofWork.User.GetAll();
+            var userResponseList = _mapper.Map<IEnumerable<UserResponse>>(users);
+            return Ok(userResponseList);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var book = await _unitofWork.User.GetById(id);
+            var user = await _unitofWork.User.GetById(id);
+            if (user == null) return NotFound();
 
-            if (book == null)
-                return NotFound();
+            var userResponse = _mapper.Map<UserResponse>(user);
 
-            return Ok(User);
+            return Ok(userResponse);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook(User user)
+        public async Task<IActionResult> CreateUser(UserRequest userRequest)
         {
-            if (ModelState.IsValid)
-            {
-                await _unitofWork.User.Add(user);
-                await _unitofWork.CompleteAsync();
+            var user = _mapper.Map<User>(userRequest);
+            var userlsit = _unitofWork.User.GetAll();
+            if (userlsit.Result.Count() == 0) user.IsAdmin = true;
+            var chekUserForregistered = await _unitofWork.User.Find(a => a.Email == userRequest.Email.ToUpper());
+            if (chekUserForregistered.Count() != 0) return Content("Already Exists");
+            await _unitofWork.User.Add(user);
 
-                return CreatedAtAction("GetBook", new { user.Id }, user);
-            }
+            await _unitofWork.CompleteAsync();
+            var userResponse = _mapper.Map<UserResponse>(user);
 
-            return new JsonResult("Somethign Went wrong") { StatusCode = 500 };
+            return CreatedAtAction("GetUser", new { userResponse.FirstName }, userResponse);
+
         }
 
         [HttpDelete("{id}")]
@@ -54,13 +63,23 @@ namespace Lemondo.Controllers
         {
             var user = await _unitofWork.User.GetById(id);
 
-            if (user == null)
-                return BadRequest();
+            if (user == null) return BadRequest();
 
             await _unitofWork.User.Delete(id);
             await _unitofWork.CompleteAsync();
+            var userResponse = _mapper.Map<UserResponse>(user);
 
-            return Ok(User);
+            return Ok(userResponse);
+        }
+
+        [HttpGet("find/{user}")]
+        public async Task<ActionResult> Find(string user)
+        {
+            user = user.ToUpper();
+            var userDbList = await _unitofWork.User.Find(a => a.FirstName.Contains(user) || a.LastName.Contains(user) || a.Email.Contains(user));
+            if (userDbList == null) return NotFound(user);
+            var userResponseList = _mapper.Map<IEnumerable<UserResponse>>(userDbList);
+            return Ok(userResponseList);
         }
     }
 }

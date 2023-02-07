@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lemondo.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20230201135503_v1.0")]
+    [Migration("20230206100632_v1.0")]
     partial class v10
     {
         /// <inheritdoc />
@@ -25,6 +25,15 @@ namespace Lemondo.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.HasSequence("ContactIDSequence")
+                .StartsAt(0L)
+                .IncrementsBy(10);
+
+            modelBuilder.HasSequence("D")
+                .StartsAt(0L);
+
+            modelBuilder.HasSequence("val");
+
             modelBuilder.Entity("Lemondo.DbClasses.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -35,18 +44,21 @@ namespace Lemondo.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("YearOfBirth")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("YearOfBirth")
+                        .HasMaxLength(50)
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Author", (string)null);
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.Book", b =>
@@ -59,16 +71,18 @@ namespace Lemondo.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Image")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("IsCheckedOut")
+                    b.Property<bool?>("IsCheckedOut")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("PublicationDate")
+                    b.Property<DateTime?>("PublicationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("Rating")
@@ -76,11 +90,17 @@ namespace Lemondo.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Book", (string)null);
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.BookAuthor", b =>
@@ -95,7 +115,7 @@ namespace Lemondo.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("BookAuthors");
+                    b.ToTable("BookAuthor", (string)null);
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.BookRating", b =>
@@ -109,19 +129,14 @@ namespace Lemondo.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
+                    b.Property<int?>("Rating")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("BookRatings");
+                    b.ToTable("BookRating", (string)null);
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.User", b =>
@@ -132,28 +147,44 @@ namespace Lemondo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("IsAdmin")
+                    b.Property<bool?>("IsAdmin")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("Lemondo.DbClasses.Book", b =>
+                {
+                    b.HasOne("Lemondo.DbClasses.User", null)
+                        .WithMany("Books")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.BookAuthor", b =>
@@ -183,15 +214,22 @@ namespace Lemondo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Lemondo.DbClasses.User", "User")
-                        .WithMany("BookRatings")
-                        .HasForeignKey("UserId")
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("Lemondo.DbClasses.User", b =>
+                {
+                    b.HasOne("Lemondo.DbClasses.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Book");
+                    b.HasOne("Lemondo.DbClasses.User", null)
+                        .WithMany("Users")
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("User");
+                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.Author", b =>
@@ -208,7 +246,9 @@ namespace Lemondo.Migrations
 
             modelBuilder.Entity("Lemondo.DbClasses.User", b =>
                 {
-                    b.Navigation("BookRatings");
+                    b.Navigation("Books");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

@@ -29,10 +29,6 @@ namespace Lemondo.UnitofWork.Repository
             User = new UserRepository(context, _logger);
         }
 
-        public UnitofWorkRepository()
-        {
-        }
-
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();

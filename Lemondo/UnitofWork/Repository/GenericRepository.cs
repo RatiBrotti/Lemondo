@@ -1,4 +1,5 @@
 ﻿using Lemondo.Context;
+using Lemondo.DbClasses;
 using Lemondo.UnitofWork.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -11,21 +12,13 @@ namespace Lemondo.UnitofWork.Repository
         protected LibraryContext _context;
 
         internal DbSet<T> dbset;
-        private LibraryContext context;
-        private object logger;
         protected readonly ILogger _logger;
 
         public GenericRepository(ILogger logger, LibraryContext context)
         {
             _logger = logger;
-            this.dbset = context.Set<T>();
-            this.context = context;
-        }
-
-        public GenericRepository(LibraryContext context, object logger)
-        {
-            this.context = context;
-            this.logger = logger;
+            this._context = context;
+            dbset = _context.Set<T>();
         }
 
         public virtual async Task<bool> Add(T entity)
@@ -46,12 +39,13 @@ namespace Lemondo.UnitofWork.Repository
 
         }
 
-        public virtual async Task<IQueryable<T>> Find(Expression<Func<T, bool>> predicate)
+        public virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
-            return (IQueryable<T>)await dbset.Where(predicate).ToListAsync();
+            var authors = await dbset.Where(predicate).ToListAsync();
+            return authors.AsQueryable();
         }
 
-        public virtual async Task<IQueryable<T>> GetAll()
+        public virtual async Task<DbSet<T>> GetAll()
         {
             return dbset;
         }
@@ -59,18 +53,6 @@ namespace Lemondo.UnitofWork.Repository
         public virtual async Task<T> GetById(int id)
         {
             return await dbset.FindAsync(id);
-        }
-
-        public virtual async Task<bool> Upsert(T entity)
-        {
-            var dbentity = await dbset.FindAsync(entity);
-            if (dbentity != null)
-            {
-                dbset.Update(entity);
-                return true;
-            }
-            
-            return false;
         }
     }
 }
