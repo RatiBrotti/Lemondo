@@ -22,6 +22,8 @@ builder.Services.AddControllers()
                     options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
                 });
 
+//builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters(); 
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();
@@ -45,17 +47,31 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("IsAdmin", policy => policy.RequireClaim("IsAdmin", "True"));
 });
 
-builder.Services.AddSwaggerGen(options =>
+//builder.Services.AddSwaggerGen(options =>
+//{
+//    options.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+//});
+
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Lemondo Librarby",
+        Description = "An ASP.NET Core Web API for managing Librarby",
+    });
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
 
 //mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-
 //unitofwork
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IUnitofWork, UnitofWorkRepository>();
+
 
 //dbcontext 
 var connectionstring = builder.Configuration.GetConnectionString("LemondoConnection");
@@ -75,6 +91,7 @@ if (app.Environment.IsDevelopment())
 app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.UseAuthentication();
 

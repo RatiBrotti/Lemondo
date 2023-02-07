@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Lemondo.DbClasses;
+using System.Reflection.Emit;
 
 namespace Lemondo.Context
 {
@@ -12,8 +13,6 @@ namespace Lemondo.Context
 
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.Id).ValueGeneratedOnAdd();
-
             builder.Property(e => e.FirstName)
                 .HasMaxLength(50);
 
@@ -21,7 +20,8 @@ namespace Lemondo.Context
                 .HasMaxLength(50);
 
             builder.Property(e => e.YearOfBirth)
-                .HasMaxLength(50);
+            .HasMaxLength(50);
+
         }
     }
 

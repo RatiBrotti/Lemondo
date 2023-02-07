@@ -2,8 +2,8 @@
 
 namespace Lemondo.UnitofWork.Interface
 {
-    public interface IBookAuthorRepository : IGenericRepository<BookAuthor>
-    {
+    //public interface IBookAuthorRepository : IGenericRepository<BookAuthor>
+    //{
 
-    }
+    //}
 }

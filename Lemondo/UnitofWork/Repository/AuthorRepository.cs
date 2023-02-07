@@ -6,7 +6,7 @@ namespace Lemondo.UnitofWork.Repository
 {
     public class AuthorRepository : GenericRepository<Author>, IAuthorRepository
     {
-        public AuthorRepository(LibraryContext context, ILogger logger) : base(logger, context)
+        public AuthorRepository(LibraryContext context, ILogger<Author> logger) : base(logger, context)
         {
 
         }

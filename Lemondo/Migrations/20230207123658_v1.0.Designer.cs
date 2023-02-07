@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lemondo.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20230206100632_v1.0")]
+    [Migration("20230207123658_v1.0")]
     partial class v10
     {
         /// <inheritdoc />
@@ -33,6 +33,21 @@ namespace Lemondo.Migrations
                 .StartsAt(0L);
 
             modelBuilder.HasSequence("val");
+
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.Property<int>("AuthorsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BooksId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorsId", "BooksId");
+
+                    b.HasIndex("BooksId");
+
+                    b.ToTable("AuthorBook");
+                });
 
             modelBuilder.Entity("Lemondo.DbClasses.Author", b =>
                 {
@@ -93,50 +108,9 @@ namespace Lemondo.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Book", (string)null);
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.BookAuthor", b =>
-                {
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookId", "AuthorId");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("BookAuthor", (string)null);
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.BookRating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Rating")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("BookRating", (string)null);
                 });
 
             modelBuilder.Entity("Lemondo.DbClasses.User", b =>
@@ -146,9 +120,6 @@ namespace Lemondo.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -168,87 +139,24 @@ namespace Lemondo.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("Lemondo.DbClasses.Book", b =>
+            modelBuilder.Entity("AuthorBook", b =>
                 {
-                    b.HasOne("Lemondo.DbClasses.User", null)
-                        .WithMany("Books")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.BookAuthor", b =>
-                {
-                    b.HasOne("Lemondo.DbClasses.Author", "Author")
-                        .WithMany("BookAuthors")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lemondo.DbClasses.Book", "Book")
-                        .WithMany("BookAuthors")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.BookRating", b =>
-                {
-                    b.HasOne("Lemondo.DbClasses.Book", "Book")
-                        .WithMany("BookRatings")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.User", b =>
-                {
-                    b.HasOne("Lemondo.DbClasses.Book", "Book")
+                    b.HasOne("Lemondo.DbClasses.Author", null)
                         .WithMany()
-                        .HasForeignKey("BookId")
+                        .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Lemondo.DbClasses.User", null)
-                        .WithMany("Users")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.Author", b =>
-                {
-                    b.Navigation("BookAuthors");
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.Book", b =>
-                {
-                    b.Navigation("BookAuthors");
-
-                    b.Navigation("BookRatings");
-                });
-
-            modelBuilder.Entity("Lemondo.DbClasses.User", b =>
-                {
-                    b.Navigation("Books");
-
-                    b.Navigation("Users");
+                    b.HasOne("Lemondo.DbClasses.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

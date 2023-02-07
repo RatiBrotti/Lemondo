@@ -15,7 +15,7 @@ namespace Lemondo.Context
             builder.HasKey(ba => new { ba.BookId, ba.AuthorId });
 
             builder.HasOne(ba => ba.Book)
-                .WithMany(b => b.BookAuthors)
+                .WithMany(b => b.Authors)
                 .HasForeignKey(ba => ba.BookId);
 
             builder.HasOne(ba => ba.Author)

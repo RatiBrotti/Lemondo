@@ -39,15 +39,20 @@ namespace Lemondo.UnitofWork.Repository
 
         }
 
-        public virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
+        public virtual async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> predicate)
         {
             var authors = await dbset.Where(predicate).ToListAsync();
             return authors.AsQueryable();
         }
 
-        public virtual async Task<DbSet<T>> GetAll()
+        public virtual async Task<DbSet<T>> All()
         {
             return dbset;
+        }
+
+        public virtual async Task<List<T>> GetAllToList()
+        {
+            return dbset.ToList();
         }
 
         public virtual async Task<T> GetById(int id)

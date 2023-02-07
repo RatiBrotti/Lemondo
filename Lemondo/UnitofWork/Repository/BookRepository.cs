@@ -10,7 +10,7 @@ namespace Lemondo.UnitofWork.Repository
 {
     public class BookRepository : GenericRepository<Book>, IBookRepository
     {
-        public BookRepository(LibraryContext context, ILogger logger) : base(logger, context)
+        public BookRepository(LibraryContext context, ILogger<Book> logger) : base(logger, context)
         {
 
         }

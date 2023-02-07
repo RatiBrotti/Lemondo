@@ -2,7 +2,7 @@
 
 namespace Lemondo.UnitofWork.Interface
 {
-    public interface IBookRatingRepository : IGenericRepository<BookRating>
-    {
-    }
+    //public interface IBookRatingRepository : IGenericRepository<BookRating>
+    //{
+    //}
 }

@@ -1,4 +1,7 @@
-﻿namespace Lemondo.ClientClass
+﻿using Lemondo.DbClasses;
+using Lemondo.Requestes;
+
+namespace Lemondo.ClientClass
 {
     public class BookResponse
     {
@@ -7,10 +10,9 @@
         public string Description { get; set; }
         public string Image { get; set; }
         public int? Rating { get; set; }
-        public List<int>? AuthorId { get; set; }
-        public List<string>? AuthorName { get; set; }
+        public List<AuthorResponse> Authors { get; set; }
         public DateTime? PublicationDate { get; set; }
-        public bool? IsCheckedOut { get; set; }
+        public int BooksQuantity { get; set; }
 
     }
 }

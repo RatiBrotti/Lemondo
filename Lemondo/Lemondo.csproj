@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="bin\**" />
     <Compile Remove="obj\**" />
@@ -15,6 +19,12 @@
     <EmbeddedResource Remove="obj\**" />
     <None Remove="bin\**" />
     <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Context\BookAuthorConfig.cs" />
+    <Compile Remove="DbClasses\BookAuthor.cs" />
+    <Compile Remove="DbClasses\BookRating.cs" />
   </ItemGroup>
 
   <ItemGroup>
