@@ -6,6 +6,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Google;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Lemondo.ClientClass;
 
 namespace Lemondo.Controllers
 {
@@ -34,6 +36,8 @@ namespace Lemondo.Controllers
                 var statusMessage = await createUserResponse.Content.ReadAsStringAsync();
                 if (statusMessage == "Already Exists") 
                 {
+                    var entityUser = GetUser(user.Email);
+                    return Content(entityUser.Result.ToString());
                     return RedirectToAction("UserPage", "Home");
                 } 
                 else
@@ -49,7 +53,68 @@ namespace Lemondo.Controllers
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync();
-            return Content("ki");
+            return RedirectToAction("Index", "Home");
         }
+        [Authorize]
+        public IActionResult UserPage()
+        {
+
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Books()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7084/api/");
+                var response = await client.GetAsync("Book");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var books = JsonConvert.DeserializeObject<List<BookResponse>>(await response.Content.ReadAsStringAsync());
+
+                    return View(books);
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+        }
+
+
+        [Authorize]
+        public IActionResult Authors()
+        {
+
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult Users()
+        {
+
+            return View();
+        }
+        public async Task<UserResponse> GetUser(string email)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync($"https://localhost:7084/api/User/find/{email}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<UserResponse>(json);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+
+
     }
 }

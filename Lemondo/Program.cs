@@ -36,7 +36,7 @@ builder.Services.AddRazorPages();
 
 //oauth2 google
 builder.Services.AddAuthentication(options => options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(/*options => options.LoginPath = "/UserMVC/google-login"*/)
+    .AddCookie(options => options.LoginPath = "/Account/GoogleLogin")
     .AddGoogle(options =>
     {
         options.ClientId = "901946628268-bg72ppla74jnqmdcotv7h8r8sp4e8v8c.apps.googleusercontent.com";
@@ -46,12 +46,13 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("IsAdmin", policy => policy.RequireClaim("IsAdmin", "True"));
 });
+//authorization policy
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireClaim("IsAdmin", "true"));
+});
 
-//builder.Services.AddSwaggerGen(options =>
-//{
-//    options.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "Api", Version = "v1" });
-//});
-
+//for documentation
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo

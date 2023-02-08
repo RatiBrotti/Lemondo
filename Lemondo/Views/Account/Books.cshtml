@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Lemondo.ClientClass.BookResponse>
+
+<h1>Books</h1>
+<table class="tbl table-bordered">
+    <thead>
+        <tr>
+            <td>Title</td>
+            <td>Description</td>
+            <th>Image</th>
+            <th>Rating</th>
+            <th>Authors</th>
+            <th>Publication Date</th>
+            <th>Books Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Description</td>
+                <td>@book.Image</td>
+                <td>@book.Rating</td>
+                <td>
+                    @foreach (var author in book.Authors)
+                    {
+                        @author.FirstName @author.LastName
+
+                        <br />
+                    }
+                </td>
+                <td>@book.PublicationDate.ToString()</td>
+                <td>@book.BooksQuantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
